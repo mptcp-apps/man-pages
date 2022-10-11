@@ -1,0 +1,170 @@
+.\" This man page is Copyright (C) 2022 Olivier Bonaventure <bonaventure@acm.org>
+.\"
+.\" %%%LICENSE_START(VERBATIM_ONE_PARA)
+.\" Permission is granted to distribute possibly modified copies
+.\" of this page provided the header is included verbatim,
+.\" and in case of nontrivial modification author and date
+.\" of the modification is added to the header.
+.q\" %%%LICENSE_END
+.TH MPTCP 7 2022-09-09 "Linux man-pages (unreleased)"
+.SH NAME
+mptcp \- Multipath TCP protocol
+.SH SYNOPSIS
+.nf
+.B #include <sys/socket.h>
+.B #include <netinet/in.h>
+.B #include <netinet/tcp.h>
+.B #ifndef IPPROTO_MPTCP
+.B #define IPPROTO_MPTCP 262
+.B #endif
+.PP
+.IB mptcp_socket " = socket(AF_INET, SOCK_STREAM, IPPROTO_MPTCP);"
+.fi
+.SH DESCRIPTION
+This is an implementation of the Multipath TCP extension to the
+TCP protocol defined in RFC\ 8684. Like
+.BR tcp (7),
+Multipath TCP provides a bidirectional reliable bytestream. The
+key difference between
+.BR tcp (7)
+and
+.BR mptcp (7)
+is that the latter allows the packets to be spread over different paths.
+.PP
+Multipath TCP is compatible with both versions 4 and 6 of
+.BR ip (7) .
+A client creates an outgoing Multipath TCP connection using the
+.BR connect (2)
+system call on a Multipath TCP socket created as shown above.
+Similarly, a server needs to 
+.BR bind (2)
+a Multipath TCP socket before calling
+.BR listen (2)
+and then
+.BR accept (2)
+to accept incoming connections. 
+.PP
+Linux only supports version 1 of the Multipath TCP protocol
+defined in RFC\ 8684. Off-tree patches are available to
+support the version of the protocol defined in RFC\ 6824.
+.PP
+Multipath TCP transports the data belonging to one Multipath TCP
+connection over different paths by using one TCP connection, called
+subflow, over which of these paths. These subflows are managed by
+the path manager, see
+.BR ip-mptcp (8) .
+The packet scheduler schedules the data over the active subflows
+of a Multipath TCP connection.
+.SS
+/proc interfaces
+Multipath TCP exposes several system-wide paraemters in
+directory
+.IR /proc/sys/net/mptcp . See also the /proc interface of
+.BR tcp (7) .
+Variables described as
+.I Boolean
+take an integer value, with a nonzero value ("true") meaning that
+the corresponding option is enabled, and a zero value ("false")
+meaning that the option is disabled.
+.TP
+.IR enabled " (Boolean; default: 1; from Linux 5.13+)"
+Allows the creation of Multipath TCP sockets if the value is 1.
+This is a per-namespace sysctl.
+.TP
+.IR checksum_enabled " (Boolean; default: 0; from Linux 5.14+) "
+Alows the utilization of the Multipath TCP DSS checksum defined
+in RFC\ 8684. This checksum improves resilience to middlebox
+interference but increases CPU load. This is a per-namespace sysctl.
+.TP
+.IR add_addr_timeout " (Integer; default: 120; from Linux 5.13) "
+Timeout (in seconds) after which an unacknownledged ADD_ADDR control message
+will be resent. This is a per-namespace sysctl. 
+.IR stale_loss_cnt " (Integer; default: 4; from Linux 5.16) "
+The number of retransmission intervals with no traffic to declare
+a subflow as stale. The packet scheduler ignores the stale
+subflows. This is a per-namespace sysctl.
+.SS Socket options
+Multipath TCP usually passes the TCP socket options on the different
+subflows that compose a Multipath TCP connection. The following
+TCP socket options are supported by Multipath TCP. See
+.BR tcp (7)
+for additional information about them.
+.TP
+.BR SO_KEEPALIVE " (since Linux 5.13)"
+.PP
+.BR SO_PRIORITY " (since Linux 5.13)"
+.PP
+.BR SO_RCVBUFF " (since Linux 5.13)"
+.PP
+.BR SO_SNDBUFF " (since Linux 5.13)"
+.PP
+.BR SO_BINDTODEVICE " (since Linux 5.13)"
+.PP
+.BR SO_BINDTOIFINDEX " (since Linux 5.13)"
+.PP
+.BR SO_LINGER " (since Linux 5.13)"
+.PP
+.BR SO_MARK " (since Linux 5.13)"
+.PP
+.BR SO_INCOMING_CPU " (since Linux 5.13)"
+.PP
+.BR SO_DEBUG " (since Linux 5.13)"
+.PP
+.BR TCP_CONGESTION " (since Linux 5.13)"
+.PP
+.BR TCP_INFO " (since Linux 5.13)"
+.PP
+.BR IP_TOS " (since Linux 5.17)"
+.PP
+.BR IP_FREEBIND " (since Linux 5.17)"
+.PP
+.BR IPV6_FREEBIND " (since Linux 5.17)"
+.PP
+.BR IP_TRANSPARENT " (since Linux 5.17)"
+.PP
+.BR TCP_CORK " (since Linux 5.17)"
+.PP
+.BR TCP_NODELAY " (since Linux 5.17)"
+.PP
+.BR SNDTIMEO " (since Linux 5.18)"
+.SS Ioctls
+Multipath TCP supports the following
+.BR ioctl (2)
+calls :
+.TP
+.BR SIOCINQ " (since Linux 5.17)"
+.TP
+.BR OUTQ " (since Linux 5.17)".
+.TP
+.BR OUTQNSD " (since Linux 5.17)"
+.TP
+.SH ERRORS 
+The
+.BR socket (2)
+call can return two errors that are specific to
+.BR mptcp (7) .
+.TP
+.B EPROTONOSUPPORT
+Indicates that the Multipath TCP protocol is not implemented.
+.TP
+.B ENOPROTOOPT
+Indicates that Multipath TCP is disabled on this host.
+.TP
+.SH SEE ALSO
+.BR accept (2),
+.BR bind (2),
+.BR connect (2),
+.BR getsockopt (2),
+.BR listen (2),
+.BR recvmsg (2),
+.BR sendfile (2),
+.BR sendmsg (2),
+.BR socket (2),
+.BR ip (7),
+.BR socket (7),
+.BR tcp (7)
+.PP
+The kernel source file
+.IR Documentation/networking/mptcp\-sysctl.txt .
+.PP
+RFC\ 8624 for the Multipath TCP specification.
