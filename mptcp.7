@@ -35,13 +35,13 @@ Multipath TCP is compatible with both versions 4 and 6 of
 A client creates an outgoing Multipath TCP connection using the
 .BR connect (2)
 system call on a Multipath TCP socket created as shown above.
-Similarly, a server needs to 
+Similarly, a server needs to
 .BR bind (2)
 a Multipath TCP socket before calling
 .BR listen (2)
 and then
 .BR accept (2)
-to accept incoming connections. 
+to accept incoming connections.
 .PP
 Linux only supports version 1 of the Multipath TCP protocol
 defined in RFC\ 8684. Off-tree patches are available to
@@ -77,7 +77,7 @@ interference but increases CPU load. This is a per-namespace sysctl.
 .TP
 .IR add_addr_timeout " (Integer; default: 120; from Linux 5.13) "
 Timeout (in seconds) after which an unacknownledged ADD_ADDR control message
-will be resent. This is a per-namespace sysctl. 
+will be resent. This is a per-namespace sysctl.
 .IR stale_loss_cnt " (Integer; default: 4; from Linux 5.16) "
 The number of retransmission intervals with no traffic to declare
 a subflow as stale. The packet scheduler ignores the stale
@@ -137,7 +137,7 @@ calls :
 .TP
 .BR OUTQNSD " (since Linux 5.17)"
 .TP
-.SH ERRORS 
+.SH ERRORS
 The
 .BR socket (2)
 call can return two errors that are specific to
