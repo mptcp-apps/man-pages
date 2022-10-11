@@ -13,7 +13,6 @@ mptcp \- Multipath TCP protocol
 .nf
 .B #include <sys/socket.h>
 .B #include <netinet/in.h>
-.B #include <netinet/tcp.h>
 .B #ifndef IPPROTO_MPTCP
 .B #define IPPROTO_MPTCP 262
 .B #endif
@@ -36,13 +35,13 @@ Multipath TCP is compatible with both versions 4 and 6 of
 A client creates an outgoing Multipath TCP connection using the
 .BR connect (2)
 system call on a Multipath TCP socket created as shown above.
-Similarly, a server needs to 
+Similarly, a server needs to
 .BR bind (2)
 a Multipath TCP socket before calling
 .BR listen (2)
 and then
 .BR accept (2)
-to accept incoming connections. 
+to accept incoming connections.
 .PP
 Linux only supports version 1 of the Multipath TCP protocol
 defined in RFC\ 8684. Off-tree patches are available to
@@ -57,7 +56,7 @@ The packet scheduler schedules the data over the active subflows
 of a Multipath TCP connection.
 .SS
 /proc interfaces
-Multipath TCP exposes several system-wide paraemters in
+Multipath TCP exposes several system-wide parameters in
 directory
 .IR /proc/sys/net/mptcp . See also the /proc interface of
 .BR tcp (7) .
@@ -72,13 +71,13 @@ Allows the creation of Multipath TCP sockets if the value is 1.
 This is a per-namespace sysctl.
 .TP
 .IR checksum_enabled " (Boolean; default: 0; from Linux 5.14+) "
-Alows the utilization of the Multipath TCP DSS checksum defined
+Allows the utilization of the Multipath TCP DSS checksum defined
 in RFC\ 8684. This checksum improves resilience to middlebox
 interference but increases CPU load. This is a per-namespace sysctl.
 .TP
 .IR add_addr_timeout " (Integer; default: 120; from Linux 5.13) "
-Timeout (in seconds) after which an unacknownledged ADD_ADDR control message
-will be resent. This is a per-namespace sysctl. 
+Timeout (in seconds) after which an unacknowledged ADD_ADDR control message
+will be resent. This is a per-namespace sysctl.
 .IR stale_loss_cnt " (Integer; default: 4; from Linux 5.16) "
 The number of retransmission intervals with no traffic to declare
 a subflow as stale. The packet scheduler ignores the stale
@@ -138,7 +137,7 @@ calls :
 .TP
 .BR OUTQNSD " (since Linux 5.17)"
 .TP
-.SH ERRORS 
+.SH ERRORS
 The
 .BR socket (2)
 call can return two errors that are specific to
